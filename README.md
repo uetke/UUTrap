@@ -5,8 +5,8 @@ Structure of the program:
 
 UUTrap: Main folder. Important executables should be placed here.
 |
-|--Model: Houses the files related to periferals, such as NI acquision cards, etc.
+|--Model: Houses the intermediate steps between model and View. It handles the conditioning of data before being presented to the user.
 |
 |--View: Houses everything related to visualization of data.
 |
-|--Controler: Houses the intermediate steps between model and View. It handles the conditioning of data before being presented to the user.
+|--Controler: Houses the files related to periferals, such as NI acquision cards, etc.
