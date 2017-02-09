@@ -1,0 +1,8 @@
+%YAML 1.2
+---
+# Default parameters for the trap program
+
+saving:
+  autoSave: 0
+  directory: '' # Leave blank for current directory
+  filenameMonitor: ''

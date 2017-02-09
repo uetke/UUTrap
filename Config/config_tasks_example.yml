@@ -1,0 +1,6 @@
+%YAML 1.2
+---
+# Specific tasks in for the NI card
+
+task:
+  Monitor: 0
