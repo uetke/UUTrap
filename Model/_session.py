@@ -6,6 +6,8 @@ class _session():
     """
     def __init__(self):
         self.user = os.getlogin()
+        self.base_dir = ''
+        ######### PARAMETERS FOR THE QPD #########
         self.adq = {}
         self.monitorTimeresol = 5 # In ms -> resolution of the timetrace
         self.monitorRefresh = 500 # In ms -> Refresh time of the monitor interfase
@@ -19,3 +21,11 @@ class _session():
         self.saveDirectory = '' # Directory where to save the data
         self.highSpeedTime = 1 # In seconds
         self.highSpeedAccuracy = .01 # In milliseconds
+        ######### PARAMETERS FOR THE CAMERA #########
+        self.camera = {}
+        self.refreshTime = 60 # Time in ms for refreshing from the camera
+        self.exposureTime = 1 # Exposure time of the camera
+        self.ROIl = 0
+        self.ROIr = 10
+        self.ROIu = 10
+        self.ROIb = 0

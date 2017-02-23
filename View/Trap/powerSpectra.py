@@ -76,7 +76,7 @@ class powerSpectra(QtGui.QMainWindow):
         stopTimetrace.setStatusTip('Stops the acquisition after the current')
         stopTimetrace.triggered.connect(self.stop_acq)
 
-        self.statusBar()
+        #self.statusBar()
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(saveAction)
@@ -84,6 +84,9 @@ class powerSpectra(QtGui.QMainWindow):
         powerMenu = menubar.addMenu('&Power Spectra')
         powerMenu.addAction(triggerTimetrace)
         powerMenu.addAction(stopTimetrace)
+
+        self.statusbar = QtGui.QStatusBar()
+        self.setStatusBar(self.statusbar)
 
     def stop_tr(self):
         """ Emmits a signal for stopping the timetraces.
@@ -101,6 +104,7 @@ class powerSpectra(QtGui.QMainWindow):
         """ Connects the signals of the working Thread with the appropriate
             functions in the main Class.
         """
+        self.statusbar.showMessage('Running...')
         self.setStatusTip('Running...')
         if self.is_running == False:
             self.is_running = True

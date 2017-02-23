@@ -3,7 +3,7 @@
 import yaml
 import numpy as np
 from Model._session import _session
-from Controller.devices import *
+#from Controller.devices import *
 
 class Trap():
     def __init__(self,_session):
@@ -78,7 +78,6 @@ class Trap():
         """Stops all the tasks related to the monitor.
         """
         if self._session.adq['type'] == 'ni':
-
             self.adq.clear(self.monitorNum)
 
     def fastTimetrace(self,conditions):
