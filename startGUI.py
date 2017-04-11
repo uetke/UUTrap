@@ -18,6 +18,8 @@ _session.adq['dev'] = device(type='',name='NI',filename=_session.dev_conf)
 _session.adq['adq'] = niDAQ(device_number=_session.adq['dev'].properties['device_number'])
 _session.adq['type'] = 'ni'
 
+_session.saveDirectory = 'G:\\Data\\'
+
 qpdx = device('qpdx')
 qpdy = device('qpdy')
 qpdz = device('qpdz')

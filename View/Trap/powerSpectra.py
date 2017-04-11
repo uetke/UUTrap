@@ -8,6 +8,8 @@ import numpy as np
 import pyqtgraph as pg
 from datetime import datetime
 from pyqtgraph.Qt import QtCore, QtGui
+from Model.lib.xml2dict import variables
+from matplotlib.backend_bases import CloseEvent
 
 from Model.trap import Trap
 from Model._session import _session
@@ -129,7 +131,7 @@ class powerSpectra(QtGui.QMainWindow):
         """Saves the files to a specified folder.
         """
         name = 'PowerSpectra_Data'
-        savedir = 'D:\\Data\\' + str(datetime.now().date()) + '\\'
+        savedir = os.path.join(self._session.saveDirectory, str(datetime.now().date()))
         if not os.path.exists(savedir):
             os.makedirs(savedir)
         i=1
@@ -137,17 +139,18 @@ class powerSpectra(QtGui.QMainWindow):
         while os.path.exists(savedir+filename+".dat"):
             filename = '%s_%s' %(name,i)
             i += 1
+
         filename_params = filename +'_config.dat'
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir,filename), self.data,fmt='%s', delimiter=",")
+        np.savetxt("%s%s" %(savedir, filename), self.data,fmt='%s', delimiter=",")
 
         header = "Length, Integration Time"
-        np.savetxt("%s%s"%(savedir,filename_params), [_session.time, _session.accuracy], header=header,fmt='%s',delimiter=',')
+        np.savetxt("%s%s"%(savedir, filename_params), [self._session.highSpeedTime, self._session.highSpeedAccuracy], header=header,fmt='%s',delimiter=',')
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
         try:
-            np.save("%s%s" %(savedir,filename[:-4]), np.array(self.data))
+            np.save("%s%s" %(savedir, filename[:-4]), np.array(self.data))
         except:
             print('Error with Save')
             print(sys.exc_info()[0])
@@ -220,6 +223,9 @@ class workThread(QtCore.QThread):
     def run(self):
         """ Triggers the ADwin to acquire a new set of data. It is a time consuming task.
         """
+        print("Session")
+        print(self._session.highSpeedTime)
+        print(self._session.highSpeedAccuracy)
         num_points = int(self._session.highSpeedTime/self._session.highSpeedAccuracy*1000)
         freqs = np.fft.rfftfreq(num_points,self._session.highSpeedAccuracy/1000)
 
@@ -236,6 +242,7 @@ class workThread(QtCore.QThread):
         conditions['devs'] = dev
         conditions['time']  = self._session.highSpeedTime
         conditions['accuracy'] = self._session.highSpeedAccuracy
+        print(conditions)
 #        dev = _session.devices[0:4]
         fastData = self.trap.fastTimetrace(conditions)
         pwrx = np.abs(np.fft.rfft(fastData[0]))**2

@@ -227,7 +227,7 @@ class mainWindow(QtGui.QMainWindow):
         """Saves the files to a specified folder.
         """
         name = 'Timetrace_Data'
-        savedir = 'D:\\Data\\' + str(datetime.now().date()) + '\\'
+        savedir = os.path.join(self._session.saveDirectory, str(datetime.now().date()))
         if not os.path.exists(savedir):
             os.makedirs(savedir)
         i=1
