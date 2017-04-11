@@ -44,15 +44,7 @@ class mainWindow(QtGui.QMainWindow):
 
         self._session = _session
         # Initial timetrace data
-        self.t =[]
-        self.data = []
-        self.varData = []
-        self.varT = []
-        for i in range(len(self.devices)):
-            self.t.append(np.empty([1,]))
-            self.data.append(np.empty([1,]))
-            self.varData.append(np.empty([1,]))
-            self.varT.append(np.empty([1,]))
+        self.clearMonitor()
 
 
         self.qpdx = self.timetraces.qpdx.plot(self.t[0],self.data[0],pen='y')
@@ -147,15 +139,19 @@ class mainWindow(QtGui.QMainWindow):
 
     def clearMonitor(self):
         """Clears the variables associated with the monitor and starts again. """
-        self.t = []
+        self.t =[]
         self.data = []
         self.varData = []
         self.varT = []
+        self.firstMon = []
+        self.firstVar = []
         for i in range(len(self.devices)):
-            self.t.append(np.empty([1, ]))
-            self.data.append(np.empty([1, ]))
-            self.varData.append(np.empty([1, ]))
-            self.varT.append(np.empty([1, ]))
+            self.t.append(np.zeros([1,]))
+            self.data.append(np.zeros([1,]))
+            self.varData.append(np.zeros([1,]))
+            self.varT.append(np.zeros([1,]))
+            self.firstMon.append(True)
+            self.firstVar.append(True)
 
     def updateMon(self):
         """Function that gets the data from the ADQ and prepares it for updating the GUI.
@@ -181,6 +177,9 @@ class mainWindow(QtGui.QMainWindow):
             self.t[i] = np.append(self.t[i], xdata+max(self.t[i]) + self._session.monitorTimeresol/1000)
             self.data[i] = np.append(self.data[i],var[i])
             limit = int(self._session.monitorTime/self._session.monitorTimeresol*1000)
+            if self.firstMon[i]:
+                limit = len(self.t[i])-1
+                self.firstMon[i] = False
             self.t[i] = self.t[i][-limit:]
             self.data[i] = self.data[i][-limit:]
 
@@ -195,6 +194,9 @@ class mainWindow(QtGui.QMainWindow):
             self.varT[i] = np.append(self.varT[i], xdata + max(self.varT[i]) + self._session.monitorRefresh/1000)
             self.varData[i] = np.append(self.varData[i], var[i])
             limit = int(self._session.monitorTime/self._session.monitorRefresh*1000)
+            if self.firstVar[i]:
+                limit = len(self.varT[i])-1
+                self.firstVar[i] = False
             self.varT[i] = self.varT[i][-limit:]
             self.varData[i] = self.varData[i][-limit:]
 
@@ -215,7 +217,6 @@ class mainWindow(QtGui.QMainWindow):
                 conditions['devs'] = self.devices
                 conditions['accuracy'] = self._session.monitorTimeresol/1000 # In seconds
                 self.trap.startMonitor(conditions)
-                print('Refresh: %s'%self._session.monitorRefresh)
                 self.ctimer.start(self._session.monitorRefresh)
 
                 self.running = True
