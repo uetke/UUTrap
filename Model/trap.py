@@ -13,7 +13,7 @@ class Trap():
         stream = open(_session.task_conf,'r')
         self.tasks = yaml.load(stream)['task']
         self.monitorNum = []
-        if self._session.adq['dev'].properties['type'] == 'ni':
+        if self._session.adq['type'] == 'ni':
             self.adq = _session.adq['adq']
         else:
             raise Exception('Other types of cards not implemented for acquireAnalog')
