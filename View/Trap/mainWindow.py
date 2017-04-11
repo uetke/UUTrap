@@ -240,12 +240,12 @@ class mainWindow(QtGui.QMainWindow):
             os.makedirs(savedir)
         i=1
         filename = name
-        while os.path.exists(savedir+filename+".dat"):
+        while os.path.exists(os.path.join(savedir,filename+".dat")):
             filename = '%s_%s' %(name,i)
             i += 1
 
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
+        np.savetxt("%s" %os.path.join(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.

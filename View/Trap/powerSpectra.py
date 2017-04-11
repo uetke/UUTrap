@@ -22,7 +22,7 @@ class powerSpectra(QtGui.QMainWindow):
 
         # Layout
         self.setWindowTitle('Power Spectra')
-        self.setGeometry(30,30,450,900)
+        self.setGeometry(30,30,900,900)
         self.timetraces = PowerSpectraWidget()
         self.setCentralWidget(self.timetraces)
 
