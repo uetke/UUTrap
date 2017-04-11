@@ -49,10 +49,10 @@ class mainWindow(QtGui.QMainWindow):
         self.varData = []
         self.varT = []
         for i in range(len(self.devices)):
-            self.t.append(np.zeros([1,]))
-            self.data.append(np.zeros([1,]))
-            self.varData.append(np.zeros([1,]))
-            self.varT.append(np.zeros([1,]))
+            self.t.append(np.empty([1,]))
+            self.data.append(np.empty([1,]))
+            self.varData.append(np.empty([1,]))
+            self.varT.append(np.empty([1,]))
 
 
         self.qpdx = self.timetraces.qpdx.plot(self.t[0],self.data[0],pen='y')
@@ -147,10 +147,15 @@ class mainWindow(QtGui.QMainWindow):
 
     def clearMonitor(self):
         """Clears the variables associated with the monitor and starts again. """
-        self.t =[]
+        self.t = []
         self.data = []
         self.varData = []
         self.varT = []
+        for i in range(len(self.devices)):
+            self.t.append(np.empty([1, ]))
+            self.data.append(np.empty([1, ]))
+            self.varData.append(np.empty([1, ]))
+            self.varT.append(np.empty([1, ]))
 
     def updateMon(self):
         """Function that gets the data from the ADQ and prepares it for updating the GUI.

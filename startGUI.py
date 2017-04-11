@@ -1,6 +1,7 @@
 """Run this program to start the GUI for controlling the optical tweezer
 """
-import os, sys
+import os
+import sys
 from Controller.devices.ni6251 import niDAQ
 from Model._session import _session
 from Model.trap import Trap
