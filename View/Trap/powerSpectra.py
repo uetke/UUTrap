@@ -136,25 +136,25 @@ class powerSpectra(QtGui.QMainWindow):
             os.makedirs(savedir)
         i=1
         filename = name
-        while os.path.exists(savedir+filename+".dat"):
+        while os.path.exists(os.path.join(savedir,filename+".dat")):
             filename = '%s_%s' %(name,i)
             i += 1
 
         filename_params = filename + '_config.dat'
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir, filename), self.data,fmt='%s', delimiter=",")
+        np.savetxt(os.path.join(savedir,filename), self.data,fmt='%s', delimiter=",")
 
         header = "Length (s), Integration Time (ms)"
-        np.savetxt("%s%s"%(savedir, filename_params), [self._session.highSpeedTime, self._session.highSpeedAccuracy], header=header,fmt='%s',delimiter=',')
+        np.savetxt(os.path.join(savedir,filename_params), [self._session.highSpeedTime, self._session.highSpeedAccuracy], header=header,fmt='%s',delimiter=',')
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
         try:
-            np.save("%s%s" %(savedir, filename[:-4]), np.array(self.data))
+            np.save(os.path.join(savedir,filename_params[:-4]), np.array(self.data))
         except:
             print('Error with Save')
             print(sys.exc_info()[0])
-        print('Data saved in %s and configuration data in %s'%(savedir+filename,filename_params) )
+        print('Data saved in %s and configuration data in %s' % os.path.join(savedir,filename_params[:-4]) )
         return
 
     def exit_safe(self):

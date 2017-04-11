@@ -236,17 +236,17 @@ class mainWindow(QtGui.QMainWindow):
             i += 1
 
         filename = filename+".dat"
-        np.savetxt("%s" %os.path.join(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
+        np.savetxt(os.path.join(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
         try:
-            np.save("%s%s" %(savedir,filename[:-4]), np.array(self.data))
+            np.save(os.path.join(savedir, filename[:-4]), np.array(self.data))
         except:
             print('Error with Save')
             print(sys.exc_info()[0])
 
-        print('Data saved in %s'%(savedir+filename) )
+        print('Data saved in %s'%os.path.join(savedir, filename[:-4])) 
         return
 
     def updateParameters(self,_session):
