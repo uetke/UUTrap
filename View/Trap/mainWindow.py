@@ -15,7 +15,6 @@ from View.Trap.Monitor import monitorWidget
 from View.Trap.powerSpectra import powerSpectra
 from View.Trap.configWindow import configWindow
 from View.Trap.valueMonitor import valueMonitor
-# from View.Camera.cameraMain import cameraMain
 
 class mainWindow(QtGui.QMainWindow):
     """ Monitor of the relevant signals.
@@ -33,7 +32,6 @@ class mainWindow(QtGui.QMainWindow):
         self.powerSpectra = powerSpectra(_session)
         self.configWindow = configWindow(_session)
         self.valueMonitor = valueMonitor()
-        #self.camera = cameraMain(_session)
         self.setCentralWidget(self.timetraces)
 
         # The devices to analize
@@ -111,10 +109,6 @@ class mainWindow(QtGui.QMainWindow):
         stopTimetrace.setStatusTip('Stops the acquisition after the current')
         stopTimetrace.triggered.connect(self.powerSpectra.stop_acq)
 
-        # cameraShow = QtGui.QAction('Camera',self)
-        # cameraShow.setStatusTip('Open the camera window')
-        # cameraShow.triggered.connect(self.camera.show)
-
         self.statusBar()
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
@@ -133,9 +127,6 @@ class mainWindow(QtGui.QMainWindow):
         traceMenu.addAction(acquireTimetrace)
         traceMenu.addAction(triggerTimetrace)
         traceMenu.addAction(stopTimetrace)
-
-        # cameraMenu = menubar.addMenu('&Camera')
-        # cameraMenu.addAction(cameraShow)
 
     def clearMonitor(self):
         """Clears the variables associated with the monitor and starts again. """
