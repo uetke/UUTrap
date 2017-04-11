@@ -18,4 +18,4 @@ logbook.db
 *config_tasks.yml
 *.exe
 *.pyc
-.idea/
+.idea

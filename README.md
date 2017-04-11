@@ -8,8 +8,9 @@ A configuration window enables the user to change the more important parameters 
 ## Software for monitoring an optical tweezer. ##
 The program follows the Model-View-Controller design structure. This allows a rapid exchange of different parts of the code.
 
-For example, the acquisition card can be changed, and the only part of the program that needs to be updated is the Model. Conversely the GUI can be modified to suit the user needs just by updating the View. The Controller hosts the interfacing with real devices. New drivers can be loaded hearer provided that the function names and outputs are maintained. 
+For example, the acquisition card can be changed, and the only part of the program that needs to be updated is the Model. Conversely the GUI can be modified to suit the user needs just by updating the View. The Controller hosts the interfacing with real devices. New drivers can be loaded hearer provided that the function names and outputs are maintained.
 
+![Alt text](screenshot.png?raw=true "Optional Title")
 
 ### Structure of the folders: ###
 UUTrap: Main folder. Important executables should be placed here.

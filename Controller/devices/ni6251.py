@@ -7,9 +7,10 @@ from PyDAQmx import *
 import PyDAQmx as nidaq
 import numpy as np
 
+
 class niDAQ():
     """Class for controlling a National Instruments NI-6251 DAQ.
-    If using an expansin such as the SCC-68 it has to be properly configured throuh the NI-MAX software.
+    If using an expansion such as the SCC-68 it has to be properly configured through the NI-MAX software.
     """
     def __init__(self,device_number=1,model='6251',debug=0):
         self.read = int32()

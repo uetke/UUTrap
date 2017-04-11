@@ -3,11 +3,7 @@
 '''
 import numpy as np
 import sys
-import pyqtgraph as pg
-import json
-import pickle
 import os
-import math as m
 import copy
 
 from pyqtgraph.Qt import QtGui, QtCore
@@ -15,11 +11,10 @@ from PyQt4.Qt import QApplication
 from datetime import datetime
 
 from Model.trap import Trap
-from Model._session import _session
-from View.Monitor import monitorWidget
-from View.powerSpectra import powerSpectra
-from View.configWindow import configWindow
-from View.valueMonitor import valueMonitor
+from View.Trap.Monitor import monitorWidget
+from View.Trap.powerSpectra import powerSpectra
+from View.Trap.configWindow import configWindow
+from View.Trap.valueMonitor import valueMonitor
 
 class mainWindow(QtGui.QMainWindow):
     """ Monitor of the relevant signals.
@@ -29,14 +24,16 @@ class mainWindow(QtGui.QMainWindow):
         self.setWindowTitle('Signal Monitor')
         self.setGeometry(30,30,1200,900)
 
+        # The class that controls the trap
+        self.trap = Trap(_session)
+
+        # The windows that are available
         self.timetraces = monitorWidget()
         self.powerSpectra = powerSpectra(_session)
         self.configWindow = configWindow(_session)
         self.valueMonitor = valueMonitor()
         self.setCentralWidget(self.timetraces)
 
-        # The class that controls the trap
-        self.trap = Trap(_session)
         # The devices to analize
         self.devices = []
         self.devices.append(_session.devs['qpdx'])
@@ -45,15 +42,7 @@ class mainWindow(QtGui.QMainWindow):
 
         self._session = _session
         # Initial timetrace data
-        self.t =[]
-        self.data = []
-        self.varData = []
-        self.varT = []
-        for i in range(len(self.devices)):
-            self.t.append(np.zeros([1,]))
-            self.data.append(np.zeros([1,]))
-            self.varData.append(np.zeros([1,]))
-            self.varT.append(np.zeros([1,]))
+        self.clearMonitor()
 
 
         self.qpdx = self.timetraces.qpdx.plot(self.t[0],self.data[0],pen='y')
@@ -73,6 +62,7 @@ class mainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(self.powerSpectra, QtCore.SIGNAL('Stop_Tr'),self.stop_timer)
         QtCore.QObject.connect(self,QtCore.SIGNAL('MeanData'),self.valueMonitor.UpdateValues)
         QtCore.QObject.connect(self.configWindow,QtCore.SIGNAL('Times'),self.updateParameters)
+        QtCore.QObject.connect(self.configWindow, QtCore.SIGNAL('clearMonitor'), self.clearMonitor)
 
         ###################
         # Define the menu #
@@ -138,19 +128,33 @@ class mainWindow(QtGui.QMainWindow):
         traceMenu.addAction(triggerTimetrace)
         traceMenu.addAction(stopTimetrace)
 
+    def clearMonitor(self):
+        """Clears the variables associated with the monitor and starts again. """
+        self.t =[]
+        self.data = []
+        self.varData = []
+        self.varT = []
+        self.firstMon = []
+        self.firstVar = []
+        for i in range(len(self.devices)):
+            self.t.append(np.zeros([1,]))
+            self.data.append(np.zeros([1,]))
+            self.varData.append(np.zeros([1,]))
+            self.varT.append(np.zeros([1,]))
+            self.firstMon.append(True)
+            self.firstVar.append(True)
+
     def updateMon(self):
         """Function that gets the data from the ADQ and prepares it for updating the GUI.
         """
-        final_data = []
-        mean_data = []
 
         final_data = self.trap.readMonitor() # Have to be sure it is an ND array
-        final_data = np.reshape(final_data,(self.trap.devsMonitor,int(len(final_data)/self.trap.devsMonitor)))
+        final_data = np.reshape(final_data, (self.trap.devsMonitor, int(len(final_data)/self.trap.devsMonitor)))
         mean_data = np.mean(final_data,1)
-        varData = np.var(final_data,1)
-        self.emit( QtCore.SIGNAL('TimeTraces'), final_data)
+        varData = np.var(final_data, 1)
+        self.emit(QtCore.SIGNAL('TimeTraces'), final_data)
         self.emit(QtCore.SIGNAL('varData'), varData)
-        self.emit( QtCore.SIGNAL('MeanData'), mean_data) # For updating values in an external dialog
+        self.emit(QtCore.SIGNAL('MeanData'), mean_data)  # For updating values in an external dialog
 
     def updateTimes(self,data):
         """Updates the plots of the timetraces.
@@ -161,9 +165,12 @@ class mainWindow(QtGui.QMainWindow):
             xdata = np.arange(len(var[i]))*self._session.monitorTimeresol/1000
             old_data = self.data[i]
             old_t = self.t[i]
-            self.t[i] = np.append(self.t[i],xdata+max(self.t[i])+self._session.monitorTimeresol/1000)
+            self.t[i] = np.append(self.t[i], xdata+max(self.t[i]) + self._session.monitorTimeresol/1000)
             self.data[i] = np.append(self.data[i],var[i])
             limit = int(self._session.monitorTime/self._session.monitorTimeresol*1000)
+            if self.firstMon[i]:
+                limit = len(self.t[i])-1
+                self.firstMon[i] = False
             self.t[i] = self.t[i][-limit:]
             self.data[i] = self.data[i][-limit:]
 
@@ -171,22 +178,22 @@ class mainWindow(QtGui.QMainWindow):
         self.qpdy.setData(self.t[1],self.data[1])
         self.qpdz.setData(self.t[2],self.data[2])
 
-    def updateVariances(self,data):
+    def updateVariances(self, data):
         var = copy.copy(data)
         for i in range(len(var)):
-            xdata =self._session.monitorRefresh/1000
-            old_data = self.varData[i]
-            old_t = self.varT[i]
-            self.varT[i] = np.append(self.varT[i],xdata+max(self.varT[i])+self._session.monitorRefresh/1000)
-            self.varData[i] = np.append(self.varData[i],var[i])
-            limit = int(self._session.monitorRefresh/self._session.monitorRefresh*1000)
+            xdata = self._session.monitorRefresh/1000
+            self.varT[i] = np.append(self.varT[i], xdata + max(self.varT[i]) + self._session.monitorRefresh/1000)
+            self.varData[i] = np.append(self.varData[i], var[i])
+            limit = int(self._session.monitorTime/self._session.monitorRefresh*1000)
+            if self.firstVar[i]:
+                limit = len(self.varT[i])-1
+                self.firstVar[i] = False
             self.varT[i] = self.varT[i][-limit:]
             self.varData[i] = self.varData[i][-limit:]
 
-        self.varx.setData(self.varT[0],self.varData[0])
-        self.vary.setData(self.varT[1],self.varData[1])
-        self.varz.setData(self.varT[2],self.varData[2])
-
+        self.varx.setData(self.varT[0], self.varData[0])
+        self.vary.setData(self.varT[1], self.varData[1])
+        self.varz.setData(self.varT[2], self.varData[2])
 
     def start_timer(self):
         """Starts the timer with a predefined update interval.
@@ -194,14 +201,13 @@ class mainWindow(QtGui.QMainWindow):
         """
         if not self.running:
             if self.powerSpectra.is_running:
-                print('Cant update while power spectra or APD is running.')
+                print('Cant update while power spectra is running.')
             else:
                 conditions = {}
                 # Starts the timer for updating the GUI
                 conditions['devs'] = self.devices
                 conditions['accuracy'] = self._session.monitorTimeresol/1000 # In seconds
                 self.trap.startMonitor(conditions)
-                print('Refresh: %s'%self._session.monitorRefresh)
                 self.ctimer.start(self._session.monitorRefresh)
 
                 self.running = True
@@ -220,26 +226,27 @@ class mainWindow(QtGui.QMainWindow):
         """Saves the files to a specified folder.
         """
         name = 'Timetrace_Data'
-        savedir = 'D:\\Data\\' + str(datetime.now().date()) + '\\'
+        savedir = os.path.join(self._session.saveDirectory, str(datetime.now().date()))
         if not os.path.exists(savedir):
             os.makedirs(savedir)
         i=1
         filename = name
-        while os.path.exists(savedir+filename+".dat"):
+        while os.path.exists(os.path.join(savedir,filename+".dat")):
             filename = '%s_%s' %(name,i)
             i += 1
+
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir,filename), self.data,fmt='%s', delimiter=",")
+        np.savetxt(os.path.join(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
         try:
-            np.save("%s%s" %(savedir,filename[:-4]), np.array(self.data))
+            np.save(os.path.join(savedir, filename[:-4]), np.array(self.data))
         except:
             print('Error with Save')
             print(sys.exc_info()[0])
 
-        print('Data saved in %s'%(savedir+filename) )
+        print('Data saved in %s'%os.path.join(savedir, filename[:-4])) 
         return
 
     def updateParameters(self,_session):

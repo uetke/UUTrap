@@ -2,8 +2,6 @@
 """
 import yaml
 import numpy as np
-from Model._session import _session
-from Controller.devices import *
 
 class Trap():
     def __init__(self,_session):
@@ -15,7 +13,7 @@ class Trap():
         stream = open(_session.task_conf,'r')
         self.tasks = yaml.load(stream)['task']
         self.monitorNum = []
-        if self._session.adq['dev'].properties['type'] == 'ni':
+        if self._session.adq['type'] == 'ni':
             self.adq = _session.adq['adq']
         else:
             raise Exception('Other types of cards not implemented for acquireAnalog')
@@ -78,7 +76,6 @@ class Trap():
         """Stops all the tasks related to the monitor.
         """
         if self._session.adq['type'] == 'ni':
-
             self.adq.clear(self.monitorNum)
 
     def fastTimetrace(self,conditions):

@@ -22,7 +22,7 @@ class powerSpectra(QtGui.QMainWindow):
 
         # Layout
         self.setWindowTitle('Power Spectra')
-        self.setGeometry(30,30,450,900)
+        self.setGeometry(30,30,900,900)
         self.timetraces = PowerSpectraWidget()
         self.setCentralWidget(self.timetraces)
 
@@ -76,7 +76,7 @@ class powerSpectra(QtGui.QMainWindow):
         stopTimetrace.setStatusTip('Stops the acquisition after the current')
         stopTimetrace.triggered.connect(self.stop_acq)
 
-        self.statusBar()
+        #self.statusBar()
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(saveAction)
@@ -84,6 +84,9 @@ class powerSpectra(QtGui.QMainWindow):
         powerMenu = menubar.addMenu('&Power Spectra')
         powerMenu.addAction(triggerTimetrace)
         powerMenu.addAction(stopTimetrace)
+
+        self.statusbar = QtGui.QStatusBar()
+        self.setStatusBar(self.statusbar)
 
     def stop_tr(self):
         """ Emmits a signal for stopping the timetraces.
@@ -101,6 +104,7 @@ class powerSpectra(QtGui.QMainWindow):
         """ Connects the signals of the working Thread with the appropriate
             functions in the main Class.
         """
+        self.statusbar.showMessage('Running...')
         self.setStatusTip('Running...')
         if self.is_running == False:
             self.is_running = True
@@ -127,29 +131,30 @@ class powerSpectra(QtGui.QMainWindow):
         """Saves the files to a specified folder.
         """
         name = 'PowerSpectra_Data'
-        savedir = 'D:\\Data\\' + str(datetime.now().date()) + '\\'
+        savedir = os.path.join(self._session.saveDirectory, str(datetime.now().date()))
         if not os.path.exists(savedir):
             os.makedirs(savedir)
         i=1
         filename = name
-        while os.path.exists(savedir+filename+".dat"):
+        while os.path.exists(os.path.join(savedir,filename+".dat")):
             filename = '%s_%s' %(name,i)
             i += 1
-        filename_params = filename +'_config.dat'
-        filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir,filename), self.data,fmt='%s', delimiter=",")
 
-        header = "Length, Integration Time"
-        np.savetxt("%s%s"%(savedir,filename_params), [_session.time, _session.accuracy], header=header,fmt='%s',delimiter=',')
+        filename_params = filename + '_config.dat'
+        filename = filename+".dat"
+        np.savetxt(os.path.join(savedir,filename), self.data,fmt='%s', delimiter=",")
+
+        header = "Length (s), Integration Time (ms)"
+        np.savetxt(os.path.join(savedir,filename_params), [self._session.highSpeedTime, self._session.highSpeedAccuracy], header=header,fmt='%s',delimiter=',')
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
         try:
-            np.save("%s%s" %(savedir,filename[:-4]), np.array(self.data))
+            np.save(os.path.join(savedir,filename_params[:-4]), np.array(self.data))
         except:
             print('Error with Save')
             print(sys.exc_info()[0])
-        print('Data saved in %s and configuration data in %s'%(savedir+filename,filename_params) )
+        print('Data saved in %s and configuration data in %s' % os.path.join(savedir,filename_params[:-4]) )
         return
 
     def exit_safe(self):
@@ -234,7 +239,6 @@ class workThread(QtCore.QThread):
         conditions['devs'] = dev
         conditions['time']  = self._session.highSpeedTime
         conditions['accuracy'] = self._session.highSpeedAccuracy
-#        dev = _session.devices[0:4]
         fastData = self.trap.fastTimetrace(conditions)
         pwrx = np.abs(np.fft.rfft(fastData[0]))**2
         pwry = np.abs(np.fft.rfft(fastData[1]))**2

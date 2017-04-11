@@ -4,3 +4,4 @@
 
 task:
   Monitor: 0
+  highSpeed: 1
