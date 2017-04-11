@@ -1,13 +1,10 @@
 """Run this program to start the GUI for controlling the optical tweezer
 """
 import os, sys
-import msvcrt
-import numpy as np
-from time import sleep
 from Controller.devices.ni6251 import niDAQ
 from Model._session import _session
 from Model.trap import Trap
-from View.mainWindow import mainWindow
+from View.Trap.mainWindow import mainWindow
 from Model.lib.xml2dict import device
 
 from PyQt4.Qt import QApplication

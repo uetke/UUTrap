@@ -8,8 +8,6 @@ import numpy as np
 import pyqtgraph as pg
 from datetime import datetime
 from pyqtgraph.Qt import QtCore, QtGui
-from Model.lib.xml2dict import variables
-from matplotlib.backend_bases import CloseEvent
 
 from Model.trap import Trap
 from Model._session import _session

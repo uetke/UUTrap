@@ -9,9 +9,8 @@ Widget for displaying the values of the signals acquired with the program.
 
 
 import sys
-from pyqtgraph.Qt import QtCore, QtGui
+from pyqtgraph.Qt import QtGui
 
-#import _session
 
 class valueMonitor(QtGui.QWidget):
     """ Widget for displaying as LCD numbers the values of different channels.

@@ -1,11 +1,8 @@
 """Classes and methods for working with cameras. It should provide an abstraction
 layer for the most common uses of cameras.
 """
-from Model._session import _session
 import h5py
 import numpy as np
-import time
-import os
 import yaml
 from datetime import datetime
 

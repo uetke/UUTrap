@@ -3,11 +3,7 @@
 '''
 import numpy as np
 import sys
-import pyqtgraph as pg
-import json
-import pickle
 import os
-import math as m
 import copy
 
 from pyqtgraph.Qt import QtGui, QtCore
@@ -15,7 +11,6 @@ from PyQt4.Qt import QApplication
 from datetime import datetime
 
 from Model.trap import Trap
-from Model._session import _session
 from View.Trap.Monitor import monitorWidget
 from View.Trap.powerSpectra import powerSpectra
 from View.Trap.configWindow import configWindow
