@@ -72,6 +72,7 @@ class mainWindow(QtGui.QMainWindow):
         QtCore.QObject.connect(self.powerSpectra, QtCore.SIGNAL('Stop_Tr'),self.stop_timer)
         QtCore.QObject.connect(self,QtCore.SIGNAL('MeanData'),self.valueMonitor.UpdateValues)
         QtCore.QObject.connect(self.configWindow,QtCore.SIGNAL('Times'),self.updateParameters)
+        QtCore.QObject.connect(self.configWindow, QtCore.SIGNAL('clearMonitor'), self.clearMonitor)
 
         ###################
         # Define the menu #
@@ -144,12 +145,16 @@ class mainWindow(QtGui.QMainWindow):
         cameraMenu = menubar.addMenu('&Camera')
         cameraMenu.addAction(cameraShow)
 
+    def clearMonitor(self):
+        """Clears the variables associated with the monitor and starts again. """
+        self.t =[]
+        self.data = []
+        self.varData = []
+        self.varT = []
 
     def updateMon(self):
         """Function that gets the data from the ADQ and prepares it for updating the GUI.
         """
-        final_data = []
-        mean_data = []
 
         final_data = self.trap.readMonitor() # Have to be sure it is an ND array
         final_data = np.reshape(final_data, (self.trap.devsMonitor, int(len(final_data)/self.trap.devsMonitor)))
@@ -234,7 +239,7 @@ class mainWindow(QtGui.QMainWindow):
             i += 1
 
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir, filename), self.data, fmt='%s', delimiter=",")
+        np.savetxt("%s%s" %(savedir, filename), [self.t, self.data], fmt='%s', delimiter=",")
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.
