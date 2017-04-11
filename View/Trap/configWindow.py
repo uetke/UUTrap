@@ -60,7 +60,7 @@ class configWindow(QtGui.QWidget):
         self.applyButton.clicked[bool].connect(self.setTimes)
 
         self.clearMonitor = QtGui.QPushButton('Clear monitor', self)
-        self.clearMonitor.clicked[bool].connect(self.clearMonitor)
+        self.clearMonitor.clicked[bool].connect(self.clear_monitor)
 
         self.layout.addWidget(self.timetraces_title,0,0,1,0)
         self.layout.addWidget(self.highSpeedTime_label,1,0)
@@ -97,5 +97,5 @@ class configWindow(QtGui.QWidget):
 
         self.emit( QtCore.SIGNAL('Times'), self._session)
 
-    def clearMonitor(self):
+    def clear_monitor(self):
         self.emit(QtCore.SIGNAL('clearMonitor'))
