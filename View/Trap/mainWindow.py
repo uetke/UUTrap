@@ -210,7 +210,7 @@ class mainWindow(QtGui.QMainWindow):
         """
         if not self.running:
             if self.powerSpectra.is_running:
-                print('Cant update while power spectra or APD is running.')
+                print('Cant update while power spectra is running.')
             else:
                 conditions = {}
                 # Starts the timer for updating the GUI

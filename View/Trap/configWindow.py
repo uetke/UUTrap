@@ -82,7 +82,7 @@ class configWindow(QtGui.QWidget):
 
     def setTimes(self):
         highSpeedTime = float(self.highSpeedTime.text())
-        highSpeedAccuracy = float(self.highSpeedAccuracy.text())/1000
+        highSpeedAccuracy = float(self.highSpeedAccuracy.text())
 
         monitorTime = float(self.monitorTime.text())
         monitorTimeresol = float(self.monitorTimeresol.text())

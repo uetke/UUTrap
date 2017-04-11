@@ -223,9 +223,6 @@ class workThread(QtCore.QThread):
     def run(self):
         """ Triggers the ADwin to acquire a new set of data. It is a time consuming task.
         """
-        print("Session")
-        print(self._session.highSpeedTime)
-        print(self._session.highSpeedAccuracy)
         num_points = int(self._session.highSpeedTime/self._session.highSpeedAccuracy*1000)
         freqs = np.fft.rfftfreq(num_points,self._session.highSpeedAccuracy/1000)
 
@@ -242,8 +239,6 @@ class workThread(QtCore.QThread):
         conditions['devs'] = dev
         conditions['time']  = self._session.highSpeedTime
         conditions['accuracy'] = self._session.highSpeedAccuracy
-        print(conditions)
-#        dev = _session.devices[0:4]
         fastData = self.trap.fastTimetrace(conditions)
         pwrx = np.abs(np.fft.rfft(fastData[0]))**2
         pwry = np.abs(np.fft.rfft(fastData[1]))**2
