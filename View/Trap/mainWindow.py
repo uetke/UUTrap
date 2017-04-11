@@ -152,12 +152,12 @@ class mainWindow(QtGui.QMainWindow):
         mean_data = []
 
         final_data = self.trap.readMonitor() # Have to be sure it is an ND array
-        final_data = np.reshape(final_data,(self.trap.devsMonitor,int(len(final_data)/self.trap.devsMonitor)))
+        final_data = np.reshape(final_data, (self.trap.devsMonitor, int(len(final_data)/self.trap.devsMonitor)))
         mean_data = np.mean(final_data,1)
-        varData = np.var(final_data,1)
-        self.emit( QtCore.SIGNAL('TimeTraces'), final_data)
+        varData = np.var(final_data, 1)
+        self.emit(QtCore.SIGNAL('TimeTraces'), final_data)
         self.emit(QtCore.SIGNAL('varData'), varData)
-        self.emit( QtCore.SIGNAL('MeanData'), mean_data) # For updating values in an external dialog
+        self.emit(QtCore.SIGNAL('MeanData'), mean_data)  # For updating values in an external dialog
 
     def updateTimes(self,data):
         """Updates the plots of the timetraces.
@@ -168,7 +168,7 @@ class mainWindow(QtGui.QMainWindow):
             xdata = np.arange(len(var[i]))*self._session.monitorTimeresol/1000
             old_data = self.data[i]
             old_t = self.t[i]
-            self.t[i] = np.append(self.t[i],xdata+max(self.t[i])+self._session.monitorTimeresol/1000)
+            self.t[i] = np.append(self.t[i], xdata+max(self.t[i]) + self._session.monitorTimeresol/1000)
             self.data[i] = np.append(self.data[i],var[i])
             limit = int(self._session.monitorTime/self._session.monitorTimeresol*1000)
             self.t[i] = self.t[i][-limit:]
@@ -178,22 +178,19 @@ class mainWindow(QtGui.QMainWindow):
         self.qpdy.setData(self.t[1],self.data[1])
         self.qpdz.setData(self.t[2],self.data[2])
 
-    def updateVariances(self,data):
+    def updateVariances(self, data):
         var = copy.copy(data)
         for i in range(len(var)):
-            xdata =self._session.monitorRefresh/1000
-            old_data = self.varData[i]
-            old_t = self.varT[i]
-            self.varT[i] = np.append(self.varT[i],xdata+max(self.varT[i])+self._session.monitorRefresh/1000)
-            self.varData[i] = np.append(self.varData[i],var[i])
-            limit = int(self._session.monitorRefresh/self._session.monitorRefresh*1000)
+            xdata = self._session.monitorRefresh/1000
+            self.varT[i] = np.append(self.varT[i], xdata + max(self.varT[i]) + self._session.monitorRefresh/1000)
+            self.varData[i] = np.append(self.varData[i], var[i])
+            limit = int(self._session.monitorTime/self._session.monitorRefresh*1000)
             self.varT[i] = self.varT[i][-limit:]
             self.varData[i] = self.varData[i][-limit:]
 
-        self.varx.setData(self.varT[0],self.varData[0])
-        self.vary.setData(self.varT[1],self.varData[1])
-        self.varz.setData(self.varT[2],self.varData[2])
-
+        self.varx.setData(self.varT[0], self.varData[0])
+        self.vary.setData(self.varT[1], self.varData[1])
+        self.varz.setData(self.varT[2], self.varData[2])
 
     def start_timer(self):
         """Starts the timer with a predefined update interval.
@@ -235,8 +232,9 @@ class mainWindow(QtGui.QMainWindow):
         while os.path.exists(savedir+filename+".dat"):
             filename = '%s_%s' %(name,i)
             i += 1
+
         filename = filename+".dat"
-        np.savetxt("%s%s" %(savedir,filename), self.data,fmt='%s', delimiter=",")
+        np.savetxt("%s%s" %(savedir, filename), self.data, fmt='%s', delimiter=",")
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
         # Only what would appear on the screen when printing self.data.

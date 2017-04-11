@@ -12,6 +12,7 @@ class monitorWidget(QtGui.QWidget):
         qpdx = pg.PlotWidget()
         qpdy = pg.PlotWidget()
         qpdz = pg.PlotWidget()
+
         varx = pg.PlotWidget()
         vary = pg.PlotWidget()
         varz = pg.PlotWidget()
@@ -23,11 +24,11 @@ class monitorWidget(QtGui.QWidget):
         qpdz.setLabel('left', "QPD Z", units='V')
         qpdz.setLabel('bottom', "Time", units='s')
 
-        varx.setLabel('left', "QPD X", units='V')
+        varx.setLabel('left', "VAR X", units='V')
         varx.setLabel('bottom', "Time", units='s')
-        vary.setLabel('left', "QPD Y", units='V')
+        vary.setLabel('left', "VAR Y", units='V')
         vary.setLabel('bottom', "Time", units='s')
-        varz.setLabel('left', "QPD Z", units='V')
+        varz.setLabel('left', "VAR Z", units='V')
         varz.setLabel('bottom', "Time", units='s')
 
         self.qpdx = qpdx

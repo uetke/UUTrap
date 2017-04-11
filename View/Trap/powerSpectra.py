@@ -140,11 +140,11 @@ class powerSpectra(QtGui.QMainWindow):
             filename = '%s_%s' %(name,i)
             i += 1
 
-        filename_params = filename +'_config.dat'
+        filename_params = filename + '_config.dat'
         filename = filename+".dat"
         np.savetxt("%s%s" %(savedir, filename), self.data,fmt='%s', delimiter=",")
 
-        header = "Length, Integration Time"
+        header = "Length (s), Integration Time (ms)"
         np.savetxt("%s%s"%(savedir, filename_params), [self._session.highSpeedTime, self._session.highSpeedAccuracy], header=header,fmt='%s',delimiter=',')
 
         # Saves the data to binary format. Sometimes (not sure why) the ascii data is not being save properly...
