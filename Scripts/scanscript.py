@@ -97,4 +97,5 @@ nrows=itrt
 ncols=itrt
 grid = z.reshape((nrows, ncols))
 plt.imshow(grid, extent=(x.min(), x.max(), y.max(), y.min()), interpolation='nearest', cmap=cm.gist_rainbow)
+plt.colorbar()
 plt.show()
