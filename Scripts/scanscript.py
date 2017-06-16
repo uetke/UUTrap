@@ -1,6 +1,7 @@
 from PyDAQmx import *
 import numpy as np
 from msvcrt import getch
+import pylab as plt
 """
 Getch for control of piezo from keyboard
 So as far as I understand in Unicode
