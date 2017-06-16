@@ -49,7 +49,6 @@ while key!=13 and key!=27:
             print("No In yet")
         elif key==81:
             print("No Out yet")
-            o+=1
         else:
             print("Jee... that is some wierd key you've pressed... try again")
     elif key==43 or key==45:
