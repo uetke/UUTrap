@@ -84,7 +84,7 @@ read = int32()
 i2=Task()
 i2.CreateAIVoltageChan("Dev1/ai2", "", DAQmx_Val_RSE, -5.0, 5.0, DAQmx_Val_Volts, None)
 i2.CfgSampClkTiming("", 100000, DAQmx_Val_Rising, DAQmx_Val_FiniteSamps, 1000000)
-data=np.zeros(100)
+data=np.zeros(1000)
 input("Start?")
 #input("Find center of the focus and press Enter:")
 i0=0
@@ -95,15 +95,15 @@ for i in Vo0:
     o1.WriteAnalogScalarF64(1, 0, i, None)
     for j in Vo1:
         o0.WriteAnalogScalarF64(1,0,j,None)
-        i2.ReadAnalogF64(100, -1, DAQmx_Val_GroupByChannel, data, 100, byref(read), None)
+        i2.ReadAnalogF64(1000, -1, DAQmx_Val_GroupByChannel, data, 1000, byref(read), None)
         dat.write(str(i) + "\t" + str(j) + "\t" + str(np.average(data)) + "\n")
         print("Point: "+str(i0)+":"+str(j0))
         forward.append(j0)
         j0+=1
     for k in Vo1r:
-        o0.WriteAnalogScalarF64(1,0,j,None)
-        i2.ReadAnalogF64(100, -1, DAQmx_Val_GroupByChannel, data, 100, byref(read), None)
-        dat.write(str(i) + "\t" + str(j) + "\t" + str(np.average(data)) + "\n")
+        o0.WriteAnalogScalarF64(1,0,k,None)
+        i2.ReadAnalogF64(1000, -1, DAQmx_Val_GroupByChannel, data, 1000, byref(read), None)
+        dat.write(str(i) + "\t" + str(k) + "\t" + str(np.average(data)) + "\n")
         print("Point: "+str(i0)+":"+str(j0))
         reverse.append(j0)
         j0+=1
@@ -112,15 +112,18 @@ dat.close()
 x,y,z= np.loadtxt(nm, delimiter='\t').T
 yf=[y[i] for i in forward]
 xf=[x[i] for i in forward]
-zb=[z[i] for i in forward]
+zf=[z[i] for i in forward]
 yb=[y[i] for i in reverse]
 xb=[x[i] for i in reverse]
-zf=[z[i] for i in reverse]
-za=[(zf[i]+zb[i])/2 for i in range(itrt*itrt)]
-zt=np.asarray(za)
+zb=[z[i] for i in reverse]
+#za=[(zf[i]+zb[i])/2 for i in range(itrt*itrt)]
+zt=np.asarray(zf)
+zu=np.asarray(zb)
 nrows=itrt
 ncols=itrt
 grid = zt.reshape((nrows, ncols))
 plt.imshow(grid, extent=(min(xf), max(xf), max(yf), min(yf)))
 plt.colorbar()
 plt.show()
+grid = zu.reshape((nrows, ncols))
+plt.imshow(grid, extent=(min(xb), max(xb), max(yb), min(yb)))
