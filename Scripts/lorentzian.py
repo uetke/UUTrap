@@ -10,7 +10,7 @@ def errorfunc(p,x,z):
         return lorentz(p,x)+z
 
 axis=["x", "y", "z"]
-for i in range(15,16):
+for i in range(15,16): #looping over data files I have
     x=np.loadtxt("PowerSpectra_Data_"+str(i)+".dat", delimiter=',') #The simple way for me to load data into an array
     for indx, ax in enumerate(axis): #use of array axis to have both name of an axis and its index in the data array
         indx = 2 #This line prevents looping over all axes and works only with one in this case Z
